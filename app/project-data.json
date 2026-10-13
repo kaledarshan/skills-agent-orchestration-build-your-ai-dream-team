@@ -1,0 +1,52 @@
+{
+  "projects": [
+    {
+      "name": "Atlas Onboarding",
+      "owner": "Mona Patel",
+      "status": "In progress",
+      "recentActivity": "Published the revised setup checklist and gathered feedback from three new contributors.",
+      "priority": "High",
+      "summary": "Make the first contribution easier with a clearer setup path and welcoming starter tasks."
+    },
+    {
+      "name": "Signal Reports",
+      "owner": "Jordan Lee",
+      "status": "In review",
+      "recentActivity": "The weekly summary layout is ready for accessibility and content review.",
+      "priority": "Medium",
+      "summary": "Bring key team milestones and project updates together in a concise weekly report."
+    },
+    {
+      "name": "Northstar Design System",
+      "owner": "Avery Chen",
+      "status": "Planning",
+      "recentActivity": "Collected component requests from product and engineering partners.",
+      "priority": "Medium",
+      "summary": "Establish reusable interface patterns that keep our product experiences consistent."
+    },
+    {
+      "name": "Community Launch",
+      "owner": "Riley Morgan",
+      "status": "On track",
+      "recentActivity": "Confirmed the launch checklist and volunteer coverage for the first event.",
+      "priority": "High",
+      "summary": "Prepare an approachable launch experience and practical resources for the community."
+    },
+    {
+      "name": "Archive Refresh",
+      "owner": "Sam Rivera",
+      "status": "Blocked",
+      "recentActivity": "Waiting on a decision about retention rules before the migration can continue.",
+      "priority": "Needs attention",
+      "summary": "Organize older project documents so contributors can find trusted reference material."
+    },
+    {
+      "name": "Metrics Foundation",
+      "owner": "Taylor Brooks",
+      "status": "In progress",
+      "recentActivity": "Agreed on the initial set of shared definitions for adoption and engagement.",
+      "priority": "Low",
+      "summary": "Create a small, dependable set of measures to help the team learn from its work."
+    }
+  ]
+}

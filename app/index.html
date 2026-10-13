@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f2f5f9">
+    <meta name="description" content="A clear, at-a-glance view of project ownership, status, and recent activity.">
+    <title>Project Pulse</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="header-content">
+        <p class="eyebrow">TEAM OVERVIEW</p>
+        <h1>Project Pulse</h1>
+        <p class="intro">A quick read on what the team is building, who is leading, and what moved recently.</p>
+      </div>
+    </header>
+
+    <main class="dashboard">
+      <section class="projects-section" aria-labelledby="projects-heading">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">CURRENT WORK</p>
+            <h2 id="projects-heading">Projects</h2>
+          </div>
+          <p class="section-note">Illustrative team snapshot</p>
+        </div>
+
+        <div id="project-list" class="project-grid" aria-live="polite" aria-busy="true">
+          <p class="state-message" role="status">Loading project details…</p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p>Project Pulse <span aria-hidden="true">·</span> A contributor-friendly overview</p>
+    </footer>
+
+    <script>
+      (() => {
+        const projectList = document.getElementById("project-list");
+        const statusBadgeClasses = new Map([
+          ["In progress", "status-badge--in-progress"],
+          ["In review", "status-badge--in-review"],
+          ["Planning", "status-badge--planning"],
+          ["On track", "status-badge--on-track"],
+          ["Blocked", "status-badge--blocked"]
+        ]);
+        const priorityBadgeClasses = new Map([
+          ["High", "priority-badge--urgent"],
+          ["Needs attention", "priority-badge--urgent"],
+          ["Medium", "priority-badge--medium"],
+          ["Low", "priority-badge--low"]
+        ]);
+
+        function showState(message, stateClass) {
+          const state = document.createElement("p");
+          state.className = `state-message ${stateClass}`;
+          state.setAttribute("role", stateClass === "error-state" ? "alert" : "status");
+          state.textContent = message;
+          projectList.replaceChildren(state);
+          projectList.setAttribute("aria-busy", "false");
+        }
+
+        function createField(label, value, className, valueClasses) {
+          const element = document.createElement("span");
+          const valueClass = valueClasses.get(value);
+          element.className = valueClass ? `${className} ${valueClass}` : className;
+          element.textContent = `${label}: ${value}`;
+          return element;
+        }
+
+        function createProjectCard(project) {
+          const article = document.createElement("article");
+          article.className = "project-card";
+
+          const heading = document.createElement("h3");
+          heading.className = "project-name";
+          heading.textContent = project.name;
+
+          const badges = document.createElement("div");
+          badges.className = "project-badges";
+          badges.append(
+            createField("Status", project.status, "badge status-badge", statusBadgeClasses),
+            createField("Priority", project.priority, "badge priority-badge", priorityBadgeClasses)
+          );
+
+          const summary = document.createElement("p");
+          summary.className = "project-summary";
+          summary.textContent = project.summary;
+
+          const metadata = document.createElement("dl");
+          metadata.className = "project-metadata";
+
+          const ownerTerm = document.createElement("dt");
+          ownerTerm.textContent = "Owner";
+          const ownerValue = document.createElement("dd");
+          ownerValue.textContent = project.owner;
+
+          const activityTerm = document.createElement("dt");
+          activityTerm.textContent = "Recent activity";
+          const activityValue = document.createElement("dd");
+          activityValue.textContent = project.recentActivity;
+
+          metadata.append(ownerTerm, ownerValue, activityTerm, activityValue);
+          article.append(heading, badges, summary, metadata);
+          return article;
+        }
+
+        async function loadProjects() {
+          try {
+            const response = await fetch("project-data.json");
+            if (!response.ok) {
+              throw new Error(`Project data request failed (${response.status}).`);
+            }
+
+            const data = await response.json();
+            if (!data || !Array.isArray(data.projects)) {
+              throw new Error("Project data must contain a projects array.");
+            }
+
+            if (data.projects.length === 0) {
+              showState("There are no projects to display right now.", "empty-state");
+              return;
+            }
+
+            const requiredFields = ["name", "owner", "status", "recentActivity", "priority", "summary"];
+            const cards = data.projects.map((project) => {
+              if (!project || requiredFields.some((field) => typeof project[field] !== "string" || !project[field].trim())) {
+                throw new Error("A project record is missing one or more required details.");
+              }
+              return createProjectCard(project);
+            });
+
+            projectList.replaceChildren(...cards);
+            projectList.setAttribute("aria-busy", "false");
+          } catch (error) {
+            console.error("Unable to load project data:", error);
+            showState("Project details could not be loaded. Please check that project-data.json is available and valid, then refresh the page.", "error-state");
+          }
+        }
+
+        loadProjects();
+      })();
+    </script>
+  </body>
+</html>
